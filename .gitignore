@@ -1,0 +1,9 @@
+# Abaikan file konfigurasi asli (karena beda laptop beda password)
+config.php
+
+# Abaikan folder upload (biar repo tidak berat)
+uploads/
+
+# Abaikan file sistem sampah
+.DS_Store
+Thumbs.db
