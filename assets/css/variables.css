@@ -1,0 +1,83 @@
+/* FILE: assets/css/variables.css */
+
+:root {
+    /* --- COLOR PALETTE: DEEP RED & BROWN THEME --- */
+    --c-primary: #520000;
+    /* Deep Red */
+    --c-primary-dark: #3d0000;
+    --c-primary-light: #750000;
+
+    --c-secondary-muted: #BD9E77;
+    /* Muted Brown */
+    --c-secondary-beige: #ECC590;
+    /* Light Beige */
+    --c-secondary-medium: #8E775E;
+    /* Medium Brown */
+
+    --c-accent-ivory: #FFFFF0;
+    /* Ivory */
+    --c-accent-black: #000000;
+    /* Pure Black */
+
+    /* --- BACKGROUNDS --- */
+    --c-bg-body: #FFFFF0;
+    /* Ivory Background */
+    --c-bg-surface: #FFFFFF;
+    /* Pure White */
+    --c-bg-element: #ECC590;
+    /* Light Beige Element */
+    --c-bg-input: #FFFFFF;
+
+    /* --- TYPOGRAPHY COLORS --- */
+    --c-text-heading: #000000;
+    /* Pure Black */
+    --c-text-body: #000000;
+    /* Pure Black */
+    --c-text-muted: #8E775E;
+    /* Medium Brown */
+    --c-text-inv: #FFFFFF;
+
+    /* --- FONTS --- */
+    --font-serif: 'Season Mix', serif;
+    --font-sans: 'Season Sans', sans-serif;
+    --font-mono: 'Roboto Mono', monospace;
+
+    /* --- TYPOGRAPHY SIZES (Desktop/Mobile) --- */
+    --text-h1: 68px;
+    --lh-h1: 72px;
+    --text-h2: 42px;
+    --lh-h2: 48px;
+    --text-h3: 26px;
+    --lh-h3: 40px;
+    --text-h4: 16px;
+    --lh-h4: 24px;
+
+    --text-body: 16px;
+    --lh-body: 24px;
+    --text-sm: 14px;
+    --lh-sm: 24px;
+    --text-xs: 12px;
+    --lh-xs: 16px;
+
+    /* --- SHADOWS --- */
+    --shadow-card: 0 10px 30px rgba(82, 0, 0, 0.08);
+    --shadow-float: 0 20px 40px rgba(82, 0, 0, 0.15);
+    --shadow-inner: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+
+    /* --- DIMENSIONS & BORDERS --- */
+    --radius-md: 12px;
+    --radius-xl: 20px;
+    --radius-pill: 50px;
+
+    /* Button Sizes */
+    --btn-h-lg: 56px;
+    --btn-r-lg: 30px;
+    --btn-h-md: 40px;
+    --btn-r-md: 20px;
+    --btn-h-sm: 36px;
+    --btn-r-sm: 16px;
+
+    /* --- ANIMATION --- */
+    --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+    --ease-smooth: cubic-bezier(0.4, 0.0, 0.2, 1);
+}

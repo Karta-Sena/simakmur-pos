@@ -1,0 +1,986 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SiMakmur | Admin Management Suite</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700;900&family=Poppins:wght@300;400;500;600;700&family=Roboto+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <script src="https://unpkg.com/feather-icons"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        /* ==========================================================================
+           1. CORE VARIABLES & RESET (REVISI TIPOGRAFI & RADIUS)
+           ========================================================================== */
+        :root {
+            /* --- COLOR PALETTE --- */
+            --c-primary: #6B1C23;       /* Deep Maroon */
+            --c-primary-dark: #4a1217;
+            --c-primary-light: #8a2e36;
+            --c-accent-gold: #cba135;   /* Vintage Gold */
+            --c-accent-gold-dim: #b8902b;
+            
+            --c-bg-body: #EFEDE6;       /* Cream Paper Texture */
+            --c-bg-surface: #FFFFFF;
+            --c-bg-input: #F9F8F3;
+            
+            --c-text-head: #6B1C23;
+            --c-text-body: #3D312E;
+            --c-text-muted: #8C7F7A;
+            
+            /* --- INDICATORS --- */
+            --c-success: #10B981;
+            --c-danger: #EF4444;
+            --c-warning: #F59E0B;
+            --c-info: #3B82F6;
+
+            /* --- DIMENSIONS & SHADOWS --- */
+            --sidebar-w: 90px;
+            --header-h: 80px;
+            --radius-md: 12px;
+            --radius-xl: 20px;          /* Radius lebih halus (sebelumnya 24px) */
+            --shadow-card: 0 4px 20px rgba(107, 28, 35, 0.06);
+            --shadow-float: 0 10px 30px rgba(107, 28, 35, 0.15);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; outline: none; }
+        
+        body {
+            font-family: 'Poppins', sans-serif; /* FONT UTAMA (Modern Sans Serif) */
+            background-color: var(--c-bg-body);
+            color: var(--c-text-body);
+            background-image: 
+                linear-gradient(rgba(107, 28, 35, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(107, 28, 35, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+            min-height: 100vh;
+            display: flex;
+            overflow-x: hidden;
+        }
+
+        /* Typography */
+        /* Judul Besar Tetap Serif */
+        h1.page-title-text { font-family: 'Merriweather', serif; font-weight: 900; }
+        
+        /* Sisanya Sans Serif */
+        h2, h3, h4 { font-weight: 700; color: var(--c-text-head); }
+        .mono-num { font-family: 'Roboto Mono', monospace; letter-spacing: -0.5px; }
+        .text-gold { color: var(--c-accent-gold); }
+        .text-maroon { color: var(--c-primary); }
+        .text-muted { color: var(--c-text-muted); }
+        
+        .stat-label, .card h3 {
+            font-family: 'Poppins', sans-serif;
+            letter-spacing: 0.5px;
+        }
+
+        /* ==========================================================================
+           VISUALISASI DATA (BARU)
+           ========================================================================== */
+        /* Progress Stack (Metode Bayar) */
+        .progress-stack { display: flex; height: 12px; border-radius: 6px; overflow: hidden; margin: 15px 0 10px 0; }
+        .progress-bar { height: 100%; }
+        .bg-maroon { background: var(--c-primary); }
+        .bg-gold { background: var(--c-accent-gold); }
+        
+        .legend-row { display: flex; justify-content: space-between; font-size: 11px; color: var(--c-text-muted); font-weight: 600; }
+        .legend-item { display: flex; align-items: center; gap: 6px; }
+        .dot { width: 8px; height: 8px; border-radius: 50%; }
+
+        /* Horizontal Bar (Menu Terlaris) */
+        .top-item-row {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 12px 0; position: relative; z-index: 1;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .top-item-row:last-child { border-bottom: none; }
+        .bg-bar {
+            position: absolute; left: 0; top: 4px; bottom: 4px;
+            background: rgba(107, 28, 35, 0.06);
+            border-radius: 8px; z-index: -1;
+            transition: width 1s ease-out;
+        }
+        .rank-num { font-weight: 700; width: 25px; color: var(--c-primary); }
+        .menu-name { font-weight: 600; font-size: 13px; }
+        .menu-count { font-size: 12px; font-weight: 700; color: var(--c-text-muted); }
+
+        /* ==========================================================================
+           2. SIDEBAR COMPONENT
+           ========================================================================== */
+        .sidebar {
+            position: fixed;
+            left: 25px; top: 25px;
+            width: var(--sidebar-w);
+            height: auto;
+            min-height: 600px;
+            max-height: calc(100vh - 50px);
+            background: var(--c-bg-surface);
+            border: 2px solid var(--c-primary);
+            border-radius: 50px;
+            box-shadow: var(--shadow-float);
+            display: flex; flex-direction: column; align-items: center;
+            padding: 30px 0; z-index: 999;
+        }
+
+        .brand {
+            width: 50px; height: 50px;
+            background: var(--c-primary); color: var(--c-accent-gold);
+            border-radius: 16px; display: grid; place-items: center;
+            font-size: 20px; font-weight: 900; margin-bottom: 40px;
+            box-shadow: 0 4px 10px rgba(107, 28, 35, 0.3);
+        }
+
+        .nav-group { display: flex; flex-direction: column; gap: 15px; width: 100%; align-items: center; flex: 1; }
+
+        .nav-item {
+            width: 50px; height: 50px; border-radius: 50%;
+            display: grid; place-items: center; color: var(--c-text-muted);
+            cursor: pointer; transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); position: relative;
+        }
+        .nav-item:hover { background: #fdf2f2; color: var(--c-primary); }
+        .nav-item.active {
+            background: var(--c-primary); color: var(--c-accent-gold);
+            box-shadow: 0 8px 20px rgba(107, 28, 35, 0.3); transform: scale(1.1);
+        }
+        /* Tooltip */
+        .nav-item::after {
+            content: attr(data-tooltip); position: absolute; left: 65px;
+            background: var(--c-primary); color: #fff; padding: 6px 12px;
+            border-radius: 8px; font-size: 12px; font-weight: 600;
+            opacity: 0; pointer-events: none; transition: 0.2s; white-space: nowrap;
+        }
+        .nav-item:hover::after { opacity: 1; left: 70px; }
+
+        .user-avatar {
+            width: 45px; height: 45px; border-radius: 50%;
+            border: 2px solid var(--c-accent-gold); padding: 2px;
+            background: #fff; margin-top: auto;
+        }
+        .user-avatar img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
+
+        /* ==========================================================================
+           3. MAIN LAYOUT AREA
+           ========================================================================== */
+        .main-pane {
+            flex: 1; margin-left: 140px; padding: 40px;
+            max-width: 1600px; width: calc(100% - 140px);
+        }
+
+        /* Page Transitions */
+        .page-section { display: none; animation: fadeIn 0.4s ease; }
+        .page-section.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Header Bar */
+        .top-bar {
+            display: flex; justify-content: space-between; align-items: flex-end;
+            margin-bottom: 35px; border-bottom: 2px solid rgba(107,28,35,0.1);
+            padding-bottom: 20px;
+        }
+        .page-title h1 { font-size: 32px; margin-bottom: 5px; }
+        .page-title p { font-size: 14px; color: var(--c-text-muted); }
+        .date-display {
+            background: #fff; padding: 10px 20px; border-radius: 50px;
+            border: 1px solid #ddd; font-weight: 600; color: var(--c-primary);
+            display: flex; align-items: center; gap: 10px;
+        }
+
+        /* ==========================================================================
+           4. CONSISTENT CARDS & GRIDS (DIPERBAIKI)
+           ========================================================================== */
+        /* Menggunakan align-items: stretch agar semua card tingginya sama */
+        .grid-4, .grid-3, .grid-2 { display: grid; gap: 24px; align-items: stretch; }
+        .grid-4 { grid-template-columns: repeat(4, 1fr); }
+        .grid-3 { grid-template-columns: repeat(3, 1fr); }
+        .grid-2 { grid-template-columns: 2fr 1fr; }
+
+        .card {
+            background: var(--c-bg-surface);
+            border-radius: var(--radius-xl);
+            padding: 25px;
+            box-shadow: var(--shadow-card);
+            border: 1px solid rgba(0,0,0,0.03);
+            
+            /* FIX: Menggunakan Flexbox agar konten terdistribusi rapi */
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            height: 100%; /* Memaksa kartu mengisi grid penuh */
+            position: relative; overflow: hidden;
+            transition: transform 0.2s;
+        }
+        .card:hover { border-color: rgba(107, 28, 35, 0.1); }
+
+        /* STAT CARD (FIX) */
+        .stat-card {
+            min-height: 160px; /* Gunakan min-height, jangan height fix */
+            justify-content: space-between;
+        }
+        .stat-icon {
+            width: 40px; height: 40px; border-radius: 10px;
+            background: rgba(107, 28, 35, 0.05); color: var(--c-primary);
+            display: grid; place-items: center; margin-bottom: 15px;
+        }
+        .stat-label { font-size: 13px; font-weight: 600; color: var(--c-text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+        .stat-value { font-size: 28px; font-weight: 900; color: var(--c-primary); margin-top: 5px; }
+        
+        .trend { font-size: 12px; font-weight: 600; padding: 4px 8px; border-radius: 6px; display: inline-flex; align-items: center; gap: 4px; width: fit-content; margin-top: auto; }
+        .trend.up { background: #DCFCE7; color: #166534; }
+        .trend.down { background: #FEE2E2; color: #991B1B; }
+        
+        /* Low Stock Alert */
+        .alert-banner {
+            background: #FEF2F2; border-left: 4px solid var(--c-danger);
+            padding: 15px; margin-bottom: 25px; border-radius: 8px;
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .alert-content h4 { color: #991B1B; font-size: 15px; margin-bottom: 4px; }
+        .alert-content p { color: #7F1D1D; font-size: 13px; }
+        .btn-fix { padding: 6px 12px; background: #fff; border: 1px solid #EF4444; color: #EF4444; border-radius: 6px; font-size: 12px; font-weight: 700; cursor: pointer; }
+
+        /* ==========================================================================
+           5. TABLES & FORMS
+           ========================================================================== */
+        .table-container {
+            width: 100%; overflow-x: auto;
+            border-radius: 16px; border: 1px solid #e5e7eb;
+            flex-grow: 1; /* Agar tabel mengisi sisa ruang kartu */
+        }
+        table { width: 100%; border-collapse: collapse; text-align: left; }
+        thead th {
+            background: #FAFAFA; padding: 16px;
+            font-size: 12px; font-weight: 700; text-transform: uppercase; color: var(--c-text-muted);
+            border-bottom: 2px solid #E5E7EB;
+        }
+        tbody tr { border-bottom: 1px solid #F3F4F6; transition: background 0.2s; }
+        tbody tr:hover { background: #FEF9F9; }
+        tbody tr:last-child { border-bottom: none; }
+        td { padding: 16px; font-size: 14px; vertical-align: middle; }
+        
+        /* Badges & Buttons */
+        .badge { padding: 6px 12px; border-radius: 30px; font-size: 11px; font-weight: 700; text-transform: uppercase; }
+        .badge-success { background: #D1FAE5; color: #065F46; }
+        .badge-danger { background: #FEE2E2; color: #991B1B; }
+        .badge-warning { background: #FEF3C7; color: #92400E; }
+        .badge-neutral { background: #F3F4F6; color: #374151; }
+
+        .btn { padding: 10px 20px; border-radius: 8px; font-weight: 600; font-size: 14px; border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; transition: 0.2s; }
+        .btn-primary { background: var(--c-primary); color: #fff; box-shadow: 0 4px 12px rgba(107, 28, 35, 0.2); }
+        .btn-outline { background: transparent; border: 1px solid #D1D5DB; color: var(--c-text-body); }
+        .btn-icon { width: 32px; height: 32px; border-radius: 6px; border: 1px solid #ddd; display: grid; place-items: center; cursor: pointer; color: #555; background: #fff; }
+        .action-group { display: flex; gap: 8px; }
+
+        .form-group { margin-bottom: 20px; }
+        .form-label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 8px; color: var(--c-text-head); }
+        .form-input, .form-select { width: 100%; padding: 12px 16px; border-radius: 8px; border: 1px solid #D1D5DB; background: var(--c-bg-input); font-family: inherit; font-size: 14px; }
+        
+        .switch { position: relative; display: inline-block; width: 50px; height: 26px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 34px; }
+        .slider:before { position: absolute; content: ""; height: 20px; width: 20px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
+        input:checked + .slider { background-color: var(--c-success); }
+        input:checked + .slider:before { transform: translateX(24px); }
+
+        .toolbar { display: flex; justify-content: space-between; margin-bottom: 20px; gap: 15px; }
+        .search-box { position: relative; width: 300px; }
+        .search-box i { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #9CA3AF; width: 16px; }
+        .search-box input { padding-left: 40px; }
+
+        /* ==========================================================================
+           6. MODALS (FIXED VISIBILITY)
+           ========================================================================== */
+        .modal-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.5);
+            /* PENTING: Display none agar tidak muncul saat load */
+            display: none; 
+            align-items: center; justify-content: center; z-index: 2000; /* Z-index tinggi */
+            backdrop-filter: blur(4px);
+        }
+        .modal-overlay.active { display: flex; animation: fadeIn 0.3s; }
+        
+        .modal-content {
+            background: #fff; width: 500px; max-width: 90%;
+            border-radius: 20px; padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+            position: relative; border-top: 5px solid var(--c-primary);
+        }
+        .modal-header { display: flex; justify-content: space-between; margin-bottom: 20px; }
+        .close-modal { background: none; border: none; cursor: pointer; font-size: 24px; color: #999; }
+        
+        .receipt-preview {
+            background: #fdfdfd; border: 1px dashed #ccc; padding: 20px;
+            font-family: 'Roboto Mono', monospace; font-size: 12px; margin-bottom: 20px;
+        }
+
+        /* --- RESPONSIVE --- */
+        @media (max-width: 1024px) {
+            .grid-4, .grid-3, .grid-2 { grid-template-columns: 1fr 1fr; }
+        }
+        @media (max-width: 768px) {
+            .sidebar { left: -100px; }
+            .main-pane { margin-left: 0; width: 100%; padding: 20px; }
+            .grid-4, .grid-3, .grid-2 { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="sidebar">
+        <div class="brand">SM</div>
+        
+        <div class="nav-group">
+            <div class="nav-item active" onclick="app.nav('dashboard')" data-tooltip="Overview">
+                <i data-feather="grid"></i>
+            </div>
+            <div class="nav-item" onclick="app.nav('reports')" data-tooltip="Laporan">
+                <i data-feather="pie-chart"></i>
+            </div>
+            <div class="nav-item" onclick="app.nav('products')" data-tooltip="Menu">
+                <i data-feather="coffee"></i>
+            </div>
+            <div class="nav-item" onclick="app.nav('transactions')" data-tooltip="Transaksi">
+                <i data-feather="list"></i>
+            </div>
+            <div class="nav-item" onclick="app.nav('staff')" data-tooltip="Karyawan">
+                <i data-feather="users"></i>
+            </div>
+            <div class="nav-item" onclick="app.nav('settings')" data-tooltip="Pengaturan">
+                <i data-feather="settings"></i>
+            </div>
+        </div>
+
+        <div class="user-avatar" title="Admin">
+            <img src="https://ui-avatars.com/api/?name=Admin+Bos&background=6B1C23&color=fff" alt="Admin">
+        </div>
+    </nav>
+
+    <main class="main-pane">
+        
+        <section id="page-dashboard" class="page-section active">
+            <div class="top-bar">
+                <div class="page-title">
+                    <h1 class="page-title-text text-maroon">SiMakmur Admin</h1>
+                    <p>Halo, selamat datang silahkan pantau kesehatan financial bisnis anda ya . . . .</p>
+                </div>
+                <div class="date-display">
+                    <i data-feather="calendar"></i>
+                    <span id="currentDate">Kamis, 27 Nov 2025</span>
+                </div>
+            </div>
+
+            <div class="grid-4" style="margin-bottom: 30px;">
+                <div class="card stat-card">
+                    <div>
+                        <div class="stat-icon"><i data-feather="dollar-sign"></i></div>
+                        <div class="stat-label">Omzet Hari Ini</div>
+                        <div class="stat-value mono-num">Rp 5.250.000</div>
+                    </div>
+                    <div class="trend up"><i data-feather="trending-up" width="12"></i> +15%</div>
+                </div>
+                <div class="card stat-card">
+                    <div>
+                        <div class="stat-icon"><i data-feather="shopping-bag"></i></div>
+                        <div class="stat-label">Total Transaksi</div>
+                        <div class="stat-value mono-num">128</div>
+                    </div>
+                    <div class="trend up"><i data-feather="arrow-up" width="12"></i> +8 order</div>
+                </div>
+                <div class="card stat-card">
+                    <div>
+                        <div class="stat-icon"><i data-feather="users"></i></div>
+                        <div class="stat-label">Rata-rata Basket</div>
+                        <div class="stat-value mono-num">Rp 41.000</div>
+                    </div>
+                    <div class="trend down"><i data-feather="arrow-down" width="12"></i> -2%</div>
+                </div>
+                <div class="card stat-card">
+                    <div>
+                        <div class="stat-icon"><i data-feather="credit-card"></i></div>
+                        <div class="stat-label">Metode Bayar</div>
+                        
+                        <div class="progress-stack">
+                            <div class="progress-bar bg-maroon" style="width: 60%"></div> <div class="progress-bar bg-gold" style="width: 40%"></div>   </div>
+                        
+                        <div class="legend-row">
+                            <div class="legend-item"><div class="dot bg-maroon"></div> Cash 60%</div>
+                            <div class="legend-item"><div class="dot bg-gold"></div> QRIS 40%</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid-2">
+                <div class="card">
+                    <div style="display:flex; justify-content:space-between; margin-bottom:20px;">
+                        <h3 class="serif font-bold">Tren Jam Sibuk (Peak Hours)</h3>
+                        <span class="badge badge-neutral">Hari Ini</span>
+                    </div>
+                    <canvas id="peakHourChart" height="120"></canvas>
+                </div>
+
+                <div class="card">
+                    <h3 class="font-bold" style="margin-bottom:20px; font-size:16px;">Menu Terlaris (Top 5)</h3>
+                    
+                    <div style="display: flex; flex-direction: column; gap: 5px;">
+                        <div class="top-item-row">
+                            <div class="bg-bar" style="width: 100%"></div>
+                            <div style="display:flex; align-items:center;">
+                                <span class="rank-num">1</span>
+                                <span class="menu-name">Steak Tenderloin</span>
+                            </div>
+                            <span class="menu-count">42 Terjual</span>
+                        </div>
+
+                        <div class="top-item-row">
+                            <div class="bg-bar" style="width: 80%"></div>
+                            <div style="display:flex; align-items:center;">
+                                <span class="rank-num">2</span>
+                                <span class="menu-name">Es Teh Jumbo</span>
+                            </div>
+                            <span class="menu-count">38 Terjual</span>
+                        </div>
+
+                        <div class="top-item-row">
+                            <div class="bg-bar" style="width: 60%"></div>
+                            <div style="display:flex; align-items:center;">
+                                <span class="rank-num">3</span>
+                                <span class="menu-name">Burger Sultan</span>
+                            </div>
+                            <span class="menu-count">25 Terjual</span>
+                        </div>
+                        
+                        <div class="top-item-row">
+                            <div class="bg-bar" style="width: 40%"></div>
+                            <div style="display:flex; align-items:center;">
+                                <span class="rank-num">4</span>
+                                <span class="menu-name">Nasi Goreng</span>
+                            </div>
+                            <span class="menu-count">18 Terjual</span>
+                        </div>
+
+                        <div class="top-item-row">
+                            <div class="bg-bar" style="width: 30%"></div>
+                            <div style="display:flex; align-items:center;">
+                                <span class="rank-num">5</span>
+                                <span class="menu-name">Choco Lava</span>
+                            </div>
+                            <span class="menu-count">12 Terjual</span>
+                        </div>
+                    </div>
+                </div>
+        </section>
+
+        <section id="page-reports" class="page-section">
+            <div class="top-bar">
+                <div class="page-title">
+                    <h1 class="serif font-black text-maroon">Laporan & Rekap</h1>
+                    <p>Analisa performa bisnis dan keuangan secara detail.</p>
+                </div>
+                <div>
+                    <select class="form-select" style="width: auto; display: inline-block;">
+                        <option>Hari Ini</option>
+                        <option>Kemarin</option>
+                        <option>7 Hari Terakhir</option>
+                        <option>Bulan Ini</option>
+                    </select>
+                    <button class="btn btn-primary"><i data-feather="download"></i> Download PDF</button>
+                    <button class="btn btn-outline"><i data-feather="file-text"></i> Excel</button>
+                </div>
+            </div>
+
+            <div class="card" style="margin-bottom: 30px; background: #fffcf5; border: 1px solid #dcd6c5;">
+                <h3 class="serif font-bold text-center" style="margin-bottom: 30px; border-bottom: 2px dashed #ccc; padding-bottom: 15px;">
+                    REKAPITULASI KEUANGAN
+                </h3>
+                <div class="grid-4">
+                    <div>
+                        <span class="text-muted font-bold text-uppercase">Pemasukan Kotor</span>
+                        <h2 class="mono-num text-maroon" style="margin-top:5px;">Rp 5.250.000</h2>
+                    </div>
+                    <div>
+                        <span class="text-muted font-bold text-uppercase">Diskon Keluar</span>
+                        <h2 class="mono-num text-danger" style="margin-top:5px;">- Rp 150.000</h2>
+                    </div>
+                    <div>
+                        <span class="text-muted font-bold text-uppercase">Pajak (10%)</span>
+                        <h2 class="mono-num text-warning" style="margin-top:5px;">Rp 477.000</h2>
+                    </div>
+                    <div style="background: #D1FAE5; padding: 10px; border-radius: 8px;">
+                        <span class="text-success font-bold text-uppercase" style="color:#065F46">Net Profit (Est)</span>
+                        <h2 class="mono-num" style="margin-top:5px; color:#065F46">Rp 4.623.000</h2>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid-2">
+                <div class="card">
+                    <h4 class="form-label text-success">Cash Cow (Paling Untung)</h4>
+                    <table class="table-container">
+                        <thead><tr><th>Menu</th><th>Terjual</th><th>Total</th></tr></thead>
+                        <tbody>
+                            <tr><td>Steak Tenderloin</td><td>42</td><td class="mono-num">Rp 5.040.000</td></tr>
+                            <tr><td>Burger Sultan</td><td>25</td><td class="mono-num">Rp 1.125.000</td></tr>
+                            <tr><td>Spaghetti Carbonara</td><td>15</td><td class="mono-num">Rp 825.000</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="card">
+                    <h4 class="form-label text-danger">Dead Stock (Kurang Laku)</h4>
+                    <table class="table-container">
+                        <thead><tr><th>Menu</th><th>Terjual</th><th>Status</th></tr></thead>
+                        <tbody>
+                            <tr><td>Lemon Tea Panas</td><td>1</td><td class="badge badge-warning">Evaluasi</td></tr>
+                            <tr><td>Roti Bakar</td><td>0</td><td class="badge badge-danger">Hapus?</td></tr>
+                            <tr><td>Air Mineral</td><td>2</td><td class="badge badge-neutral">Normal</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <section id="page-products" class="page-section">
+            <div class="top-bar">
+                <div class="page-title">
+                    <h1 class="serif font-black text-maroon">Manajemen Menu</h1>
+                    <p>Tambah, edit, atau atur status menu.</p>
+                </div>
+                <button class="btn btn-primary" onclick="app.modal('modalProduct', true)"><i data-feather="plus"></i> Tambah Menu</button>
+            </div>
+
+            <div class="toolbar">
+                <div class="search-box">
+                    <i data-feather="search"></i>
+                    <input type="text" class="form-input" placeholder="Cari nama menu..." onkeyup="app.searchTable('productTable', this.value)">
+                </div>
+                <div style="display:flex; gap:10px;">
+                    <select class="form-select" style="width:150px"><option>Semua Kategori</option><option>Makanan</option><option>Minuman</option></select>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="table-container">
+                    <table id="productTable">
+                        <thead>
+                            <tr>
+                                <th>Foto</th>
+                                <th>Nama Menu</th>
+                                <th>Kategori</th>
+                                <th>Harga</th>
+                                <th>Status</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="productBody">
+                            </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <section id="page-transactions" class="page-section">
+            <div class="top-bar">
+                <div class="page-title">
+                    <h1 class="serif font-black text-maroon">Riwayat Transaksi</h1>
+                    <p>Audit log aktivitas kasir untuk mencegah kecurangan.</p>
+                </div>
+            </div>
+
+            <div class="toolbar">
+                <div class="search-box">
+                    <i data-feather="search"></i>
+                    <input type="text" class="form-input" placeholder="Cari ID Transaksi..." onkeyup="app.searchTable('transTable', this.value)">
+                </div>
+                <select class="form-select" style="width:150px"><option>Semua Status</option><option>Lunas</option><option>Void</option></select>
+            </div>
+
+            <div class="card">
+                <div class="table-container">
+                    <table id="transTable">
+                        <thead>
+                            <tr>
+                                <th>Waktu</th>
+                                <th>ID Transaksi</th>
+                                <th>Kasir</th>
+                                <th>Total Bayar</th>
+                                <th>Metode</th>
+                                <th>Status</th>
+                                <th>Detail</th>
+                            </tr>
+                        </thead>
+                        <tbody id="transBody">
+                            </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <section id="page-staff" class="page-section">
+            <div class="top-bar">
+                <div class="page-title">
+                    <h1 class="serif font-black text-maroon">Manajemen Karyawan</h1>
+                    <p>Atur akses login kasir.</p>
+                </div>
+                <button class="btn btn-primary"><i data-feather="user-plus"></i> Tambah Karyawan</button>
+            </div>
+
+            <div class="grid-3">
+                <div class="card" style="text-align:center;">
+                    <img src="https://ui-avatars.com/api/?name=Budi+Santoso&background=random" style="width:80px; height:80px; border-radius:50%; margin:0 auto 15px;">
+                    <h3 class="font-bold">Budi Santoso</h3>
+                    <p class="text-muted">Kasir Senior</p>
+                    <div style="margin: 15px 0; padding:10px; background:#f9f9f9; border-radius:8px;">
+                        <span class="text-maroon font-black">156</span> Transaksi Bulan Ini
+                    </div>
+                    <div class="action-group" style="justify-content:center;">
+                        <button class="btn btn-outline" style="font-size:12px;">Reset PIN</button>
+                        <button class="btn btn-outline" style="font-size:12px; color:var(--c-danger); border-color:var(--c-danger);">Block</button>
+                    </div>
+                </div>
+                 <div class="card" style="text-align:center;">
+                    <img src="https://ui-avatars.com/api/?name=Siti+Aminah&background=random" style="width:80px; height:80px; border-radius:50%; margin:0 auto 15px;">
+                    <h3 class="font-bold">Siti Aminah</h3>
+                    <p class="text-muted">Kasir Junior</p>
+                    <div style="margin: 15px 0; padding:10px; background:#f9f9f9; border-radius:8px;">
+                        <span class="text-maroon font-black">84</span> Transaksi Bulan Ini
+                    </div>
+                    <div class="action-group" style="justify-content:center;">
+                        <button class="btn btn-outline" style="font-size:12px;">Reset PIN</button>
+                        <button class="btn btn-outline" style="font-size:12px; color:var(--c-danger); border-color:var(--c-danger);">Block</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="page-settings" class="page-section">
+            <div class="top-bar">
+                <div class="page-title">
+                    <h1 class="serif font-black text-maroon">Pengaturan Toko</h1>
+                    <p>Konfigurasi struk, pajak, dan printer.</p>
+                </div>
+                <button class="btn btn-primary">Simpan Perubahan</button>
+            </div>
+
+            <div class="grid-2">
+                <div class="card">
+                    <h3 class="serif font-bold" style="margin-bottom:20px;">Info Struk</h3>
+                    <div class="form-group">
+                        <label class="form-label">Nama Toko</label>
+                        <input type="text" class="form-input" value="SiMakmur Resto">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Alamat</label>
+                        <input type="text" class="form-input" value="Jl. Raya Makmur No. 88, Jakarta">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Footer Pesan</label>
+                        <input type="text" class="form-input" value="Terima kasih, datang lagi ya!">
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3 class="serif font-bold" style="margin-bottom:20px;">Pajak & Perangkat</h3>
+                    <div class="form-group">
+                        <label class="form-label">Pajak PPN (%)</label>
+                        <input type="number" class="form-input" value="10">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Service Charge (%)</label>
+                        <input type="number" class="form-input" value="0">
+                    </div>
+                    <hr style="margin:20px 0; border:0; border-top:1px solid #eee;">
+                    <div class="form-group">
+                        <label class="form-label">Printer Terhubung</label>
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <span class="badge badge-success">EPSON TM-T82 (Ready)</span>
+                            <button class="btn btn-outline" style="font-size:12px;">Test Print</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <div class="modal-overlay" id="modalProduct">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="serif font-bold">Tambah / Edit Menu</h3>
+                <button class="close-modal" onclick="app.modal('modalProduct', false)">&times;</button>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Nama Menu</label>
+                <input type="text" class="form-input" placeholder="Contoh: Burger Sultan">
+            </div>
+            <div class="grid-2" style="gap:15px; margin-bottom:0;">
+                <div class="form-group">
+                    <label class="form-label">Harga (Rp)</label>
+                    <input type="number" class="form-input" placeholder="45000">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Kategori</label>
+                    <select class="form-select">
+                        <option>Makanan Berat</option>
+                        <option>Minuman</option>
+                        <option>Snack</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Upload Foto</label>
+                <input type="file" class="form-input">
+            </div>
+            <div class="form-group">
+                <label class="form-label" style="display:flex; justify-content:space-between;">
+                    Aktifkan Menu?
+                    <label class="switch">
+                        <input type="checkbox" checked>
+                        <span class="slider"></span>
+                    </label>
+                </label>
+                <small class="text-muted">Jika dimatikan, menu tidak akan muncul di kasir.</small>
+            </div>
+            <button class="btn btn-primary" style="width:100%; justify-content:center;">Simpan Menu</button>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modalTransDetail">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="serif font-bold">Detail Transaksi #SM-102</h3>
+                <button class="close-modal" onclick="app.modal('modalTransDetail', false)">&times;</button>
+            </div>
+            
+            <div class="receipt-preview">
+                <div style="text-align:center; margin-bottom:10px; font-weight:bold;">SIMAKMUR RESTO</div>
+                <div style="border-bottom:1px dashed #000; padding-bottom:10px; margin-bottom:10px;">
+                    Date: 27/11/2025 14:30<br>
+                    Cashier: Budi Santoso
+                </div>
+                <div style="display:flex; justify-content:space-between;">
+                    <span>1x Steak Tenderloin</span> <span>120.000</span>
+                </div>
+                <div style="display:flex; justify-content:space-between;">
+                    <span>2x Es Teh Jumbo</span> <span>30.000</span>
+                </div>
+                <div style="border-top:1px dashed #000; margin-top:10px; padding-top:10px; display:flex; justify-content:space-between; font-weight:bold;">
+                    <span>TOTAL</span> <span>Rp 150.000</span>
+                </div>
+                <div style="margin-top:5px; text-align:right;">Method: QRIS</div>
+            </div>
+
+            <div style="background:#FEF2F2; padding:10px; border-radius:8px; margin-bottom:20px; display:none;" id="voidReasonBox">
+                <strong style="color:#991B1B">Status: VOID (Dibatalkan)</strong><br>
+                <small>Alasan: Pelanggan salah pesan menu, minta ganti sebelum dimasak.</small>
+            </div>
+
+            <button class="btn btn-outline" style="width:100%; justify-content:center; color:var(--c-danger); border-color:var(--c-danger);">
+                <i data-feather="x-circle"></i> Void Transaksi Ini
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // --- 1. MOCK DATA (DUMMY) ---
+        const PRODUCTS = [
+            { id: 1, name: "Burger Sultan", cat: "Makanan", price: 45000, stock: 50, active: true },
+            { id: 2, name: "Steak Tenderloin", cat: "Makanan", price: 120000, stock: 3, active: true }, // Low Stock
+            { id: 3, name: "Es Teh Jumbo", cat: "Minuman", price: 15000, stock: 100, active: true },
+            { id: 4, name: "Spaghetti Carbonara", cat: "Makanan", price: 55000, stock: 20, active: true },
+            { id: 5, name: "Choco Lava", cat: "Snack", price: 35000, stock: 4, active: true }, // Low Stock
+            { id: 6, name: "Lemon Tea", cat: "Minuman", price: 12000, stock: 0, active: false }, // Inactive
+            { id: 7, name: "Nasi Goreng", cat: "Makanan", price: 35000, stock: 45, active: true },
+            { id: 8, name: "Air Mineral", cat: "Minuman", price: 5000, stock: 2, active: true }, // Low Stock
+        ];
+
+        const TRANSACTIONS = [
+            { id: "SM-104", time: "14:45", cashier: "Budi", total: 45000, method: "Tunai", status: "Lunas" },
+            { id: "SM-103", time: "14:40", cashier: "Siti", total: 155000, method: "QRIS", status: "Lunas" },
+            { id: "SM-102", time: "14:30", cashier: "Budi", total: 150000, method: "QRIS", status: "Lunas" },
+            { id: "SM-101", time: "13:15", cashier: "Budi", total: 35000, method: "Tunai", status: "Void" },
+            { id: "SM-100", time: "12:50", cashier: "Siti", total: 75000, method: "Debit", status: "Lunas" },
+            { id: "SM-099", time: "12:10", cashier: "Budi", total: 220000, method: "QRIS", status: "Lunas" },
+            { id: "SM-098", time: "11:55", cashier: "Siti", total: 18000, method: "Tunai", status: "Refund" },
+            { id: "SM-097", time: "11:30", cashier: "Budi", total: 95000, method: "Tunai", status: "Lunas" },
+            { id: "SM-096", time: "10:15", cashier: "Siti", total: 45000, method: "QRIS", status: "Lunas" },
+            { id: "SM-095", time: "09:45", cashier: "Budi", total: 30000, method: "Tunai", status: "Lunas" },
+        ];
+
+        // --- 2. APP LOGIC ---
+        const app = {
+            init: function() {
+                feather.replace();
+                this.renderProducts();
+                this.renderTransactions();
+                this.renderChart();
+                // Removed stock check
+            },
+
+            // Navigation
+            nav: function(pageId) {
+                // Hide all sections
+                document.querySelectorAll('.page-section').forEach(el => el.classList.remove('active'));
+                // Show target
+                document.getElementById('page-' + pageId).classList.add('active');
+                
+                // Update sidebar active state
+                document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+                // Simple logic to find active nav (based on onclick attr or similar) - simplified here
+                event.currentTarget.classList.add('active');
+            },
+
+            // Modal Control
+            modal: function(modalId, show) {
+                const el = document.getElementById(modalId);
+                if(show) el.classList.add('active');
+                else el.classList.remove('active');
+            },
+
+            // Render Product Table
+            renderProducts: function() {
+                const tbody = document.getElementById('productBody');
+                tbody.innerHTML = PRODUCTS.map(p => `
+                    <tr>
+                        <td>
+                            <div style="width:40px; height:40px; background:#ddd; border-radius:8px; overflow:hidden;">
+                                <img src="https://source.unsplash.com/random/100x100/?food,${p.cat}" style="width:100%; height:100%; object-fit:cover;">
+                            </div>
+                        </td>
+                        <td class="font-bold">${p.name}</td>
+                        <td><span class="badge badge-neutral">${p.cat}</span></td>
+                        <td class="mono-num">${this.formatRp(p.price)}</td>
+                        <td>
+                            <label class="switch" style="transform:scale(0.8)">
+                                <input type="checkbox" ${p.active ? 'checked' : ''}>
+                                <span class="slider"></span>
+                            </label>
+                        </td>
+                        <td>
+                            <div class="action-group">
+                                <div class="btn-icon" onclick="app.modal('modalProduct', true)"><i data-feather="edit-2" width="16"></i></div>
+                                <div class="btn-icon danger"><i data-feather="trash" width="16"></i></div>
+                            </div>
+                        </td>
+                    </tr>
+                `).join('');
+                feather.replace();
+            },
+
+            // Render Transaction Table
+            renderTransactions: function() {
+                const tbody = document.getElementById('transBody');
+                tbody.innerHTML = TRANSACTIONS.map(t => {
+                    let badgeClass = 'badge-success';
+                    if(t.status === 'Void') badgeClass = 'badge-danger';
+                    if(t.status === 'Refund') badgeClass = 'badge-warning';
+
+                    return `
+                    <tr>
+                        <td class="text-muted font-bold">${t.time}</td>
+                        <td class="mono-num font-bold">#${t.id}</td>
+                        <td>${t.cashier}</td>
+                        <td class="mono-num font-bold">${this.formatRp(t.total)}</td>
+                        <td>${t.method}</td>
+                        <td><span class="badge ${badgeClass}">${t.status}</span></td>
+                        <td>
+                            <button class="btn-outline" style="padding:4px 10px; font-size:12px; border-radius:4px;" onclick="app.openTransDetail('${t.id}')">
+                                Lihat
+                            </button>
+                        </td>
+                    </tr>
+                    `;
+                }).join('');
+            },
+
+            openTransDetail: function(id) {
+                // In real app, fetch data by ID
+                this.modal('modalTransDetail', true);
+            },
+
+            // Chart.js Render
+            renderChart: function() {
+                const ctx = document.getElementById('peakHourChart').getContext('2d');
+                new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: ['10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00'],
+                        datasets: [{
+                            label: 'Jumlah Transaksi',
+                            data: [5, 12, 28, 15, 22, 10, 8],
+                            borderColor: '#6B1C23',
+                            backgroundColor: 'rgba(107, 28, 35, 0.05)',
+                            borderWidth: 2,
+                            tension: 0.4,
+                            fill: true,
+                            pointRadius: 4,
+                            pointBackgroundColor: '#cba135'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: { display: false }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                grid: {
+                                    display: true,
+                                    borderDash: [5, 5]
+                                },
+                                /* PERBAIKAN: title dimasukkan ke dalam 'y' */
+                                title: {
+                                    display: true,
+                                    text: 'Volume (Trx)',
+                                    font: {
+                                        size: 10,
+                                        weight: 'bold'
+                                    }
+                                }
+                            }, /* Kurung penutup 'y' ada di sini */
+                            
+                            x: {
+                                grid: { display: false }
+                            }
+                        }
+                    }
+                });
+            },
+
+            // Utility: Search Table
+            searchTable: function(tableId, query) {
+                const filter = query.toUpperCase();
+                const table = document.getElementById(tableId);
+                const tr = table.getElementsByTagName("tr");
+                
+                for (let i = 1; i < tr.length; i++) {
+                    let tdArr = tr[i].getElementsByTagName("td");
+                    let found = false;
+                    for (let j = 0; j < tdArr.length; j++) {
+                        if (tdArr[j]) {
+                            let txtValue = tdArr[j].textContent || tdArr[j].innerText;
+                            if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                                found = true;
+                                break;
+                            }
+                        }
+                    }
+                    tr[i].style.display = found ? "" : "none";
+                }
+            },
+
+            formatRp: function(num) {
+                return 'Rp ' + num.toLocaleString('id-ID');
+            }
+        };
+
+        // Start App
+        document.addEventListener('DOMContentLoaded', () => {
+            app.init();
+        });
+    </script>
+</body>
+</html>

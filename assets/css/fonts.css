@@ -1,0 +1,81 @@
+/* FILE: assets/css/fonts.css */
+
+/* ============================================
+   SEASON MIX (SERIF FONT)
+   ============================================ */
+
+/* Regular */
+@font-face {
+    font-family: 'Season Mix';
+    src: url('../fonts/serif/Season Mix/SeasonMix-TRIAL-Regular.woff2') format('woff2');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
+/* Medium */
+@font-face {
+    font-family: 'Season Mix';
+    src: url('../fonts/serif/Season Mix/SeasonMix-TRIAL-Medium.woff2') format('woff2');
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
+}
+
+/* Bold */
+@font-face {
+    font-family: 'Season Mix';
+    src: url('../fonts/serif/Season Mix/SeasonMix-TRIAL-Bold.woff2') format('woff2');
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+}
+
+/* ============================================
+   SEASON SANS (SANS-SERIF FONT)
+   ============================================ */
+
+/* Light */
+@font-face {
+    font-family: 'Season Sans';
+    src: url('../fonts/sans-serif/Season Sans/SeasonSans-TRIAL-Light.woff2') format('woff2');
+    font-weight: 300;
+    font-style: normal;
+    font-display: swap;
+}
+
+/* Regular */
+@font-face {
+    font-family: 'Season Sans';
+    src: url('../fonts/sans-serif/Season Sans/SeasonSans-TRIAL-Regular.woff2') format('woff2');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
+/* Medium */
+@font-face {
+    font-family: 'Season Sans';
+    src: url('../fonts/sans-serif/Season Sans/SeasonSans-TRIAL-Medium.woff2') format('woff2');
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
+}
+
+/* SemiBold */
+@font-face {
+    font-family: 'Season Sans';
+    src: url('../fonts/sans-serif/Season Sans/SeasonSans-TRIAL-SemiBold.woff2') format('woff2');
+    font-weight: 600;
+    font-style: normal;
+    font-display: swap;
+}
+
+/* Bold */
+@font-face {
+    font-family: 'Season Sans';
+    src: url('../fonts/sans-serif/Season Sans/SeasonSans-TRIAL-Bold.woff2') format('woff2');
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+}

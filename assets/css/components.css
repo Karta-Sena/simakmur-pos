@@ -1,0 +1,247 @@
+/* FILE: assets/css/components.css */
+
+/* ============================================
+   BUTTON SYSTEM
+   Based on Design Guide (Image 4)
+   ============================================ */
+
+/* --- BASE BUTTON --- */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-family: var(--font-sans);
+    font-weight: 500;
+    transition: all 0.2s;
+    cursor: pointer;
+    border: none;
+    outline: none;
+}
+
+/* --- BUTTON SIZES --- */
+
+/* Large Button: 56px height, 30px radius */
+.btn-lg {
+    height: var(--btn-h-lg);
+    /* 56px */
+    border-radius: var(--btn-r-lg);
+    /* 30px */
+    padding: 0 28px;
+    font-size: 16px;
+    line-height: 24px;
+}
+
+/* Medium Button: 40px height, 20px radius */
+.btn-md {
+    height: var(--btn-h-md);
+    /* 40px */
+    border-radius: var(--btn-r-md);
+    /* 20px */
+    padding: 0 20px;
+    font-size: 16px;
+    line-height: 24px;
+}
+
+/* Small Button: 36px height, 16px radius */
+.btn-sm {
+    height: var(--btn-h-sm);
+    /* 36px */
+    border-radius: var(--btn-r-sm);
+    /* 16px */
+    padding: 0 16px;
+    font-size: 14px;
+    line-height: 24px;
+}
+
+/* Default to Medium if not specified */
+.btn:not(.btn-lg):not(.btn-sm) {
+    height: var(--btn-h-md);
+    border-radius: var(--btn-r-md);
+    padding: 0 20px;
+    font-size: 16px;
+}
+
+/* --- BUTTON VARIANTS --- */
+
+.btn-primary {
+    background: var(--c-primary);
+    color: var(--c-accent-ivory);
+    box-shadow: 0 4px 12px rgba(82, 0, 0, 0.2);
+}
+
+.btn-primary:hover {
+    background: var(--c-primary-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(82, 0, 0, 0.3);
+}
+
+.btn-primary:active {
+    transform: translateY(0);
+}
+
+.btn-outline {
+    border: 1px solid var(--c-secondary-muted);
+    color: var(--c-text-body);
+    background: transparent;
+}
+
+.btn-outline:hover {
+    border-color: var(--c-primary);
+    color: var(--c-primary);
+    background: rgba(82, 0, 0, 0.05);
+}
+
+/* Block Button (Full Width) */
+.btn-block {
+    width: 100%;
+}
+
+/* Icon Button (Circular) */
+.btn-icon {
+    width: var(--btn-h-md);
+    height: var(--btn-h-md);
+    padding: 0;
+    border-radius: 50%;
+}
+
+.btn-icon.btn-lg {
+    width: var(--btn-h-lg);
+    height: var(--btn-h-lg);
+}
+
+.btn-icon.btn-sm {
+    width: var(--btn-h-sm);
+    height: var(--btn-h-sm);
+}
+
+/* ============================================
+   FORM INPUTS
+   ============================================ */
+
+.form-input {
+    width: 100%;
+    padding: 12px 16px;
+    border-radius: 8px;
+    border: 1px solid var(--c-line-subtle);
+    background: var(--c-bg-input);
+    font-family: var(--font-sans);
+    font-size: 14px;
+    line-height: 24px;
+    transition: 0.3s;
+}
+
+.form-input:focus {
+    border-color: var(--c-primary);
+    box-shadow: 0 0 0 4px rgba(82, 0, 0, 0.05);
+}
+
+/* ============================================
+   MODALS
+   ============================================ */
+
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(82, 0, 0, 0.8);
+    backdrop-filter: blur(5px);
+    z-index: 2000;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.modal-overlay.active {
+    display: flex;
+    opacity: 1;
+}
+
+.modal-card {
+    background: #fff;
+    padding: 30px;
+    border-radius: 20px;
+    width: 500px;
+    max-width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+    border: 4px solid var(--c-primary);
+    box-shadow: var(--shadow-float);
+    transform: scale(0.9);
+    transition: transform 0.3s var(--ease-bounce);
+}
+
+.modal-overlay.active .modal-card {
+    transform: scale(1);
+}
+
+.modal-close {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: #f0f0f0;
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.modal-close:hover {
+    background: var(--c-primary);
+    color: #fff;
+}
+
+/* ============================================
+   TOAST NOTIFICATIONS
+   ============================================ */
+
+.toast {
+    position: fixed;
+    top: 30px;
+    left: 50%;
+    transform: translateX(-50%) translateY(-100px);
+    background: var(--c-primary);
+    color: #fff;
+    padding: 12px 24px;
+    border-radius: 50px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: var(--shadow-float);
+    z-index: 3000;
+    transition: 0.4s var(--ease-bounce);
+    opacity: 0;
+}
+
+.toast.show {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+}
+
+/* ============================================
+   PRINT STYLES
+   ============================================ */
+
+@media print {
+    body * {
+        visibility: hidden;
+    }
+
+    #receipt-area,
+    #receipt-area * {
+        visibility: visible;
+    }
+
+    #receipt-area {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+    }
+}

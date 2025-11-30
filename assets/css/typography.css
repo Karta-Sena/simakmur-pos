@@ -1,0 +1,163 @@
+/* FILE: assets/css/typography.css */
+
+/* ============================================
+   TYPOGRAPHY SYSTEM
+   Based on Design Guide (Images 2 & 3)
+   ============================================ */
+
+/* --- HEADINGS --- */
+
+h1,
+.text-h1 {
+    font-family: var(--font-serif);
+    font-size: var(--text-h1);
+    /* 68px */
+    line-height: var(--lh-h1);
+    /* 72px */
+    font-weight: 500;
+    /* Medium */
+    color: var(--c-text-heading);
+    letter-spacing: -0.02em;
+}
+
+h2,
+.text-h2 {
+    font-family: var(--font-serif);
+    font-size: var(--text-h2);
+    /* 42px */
+    line-height: var(--lh-h2);
+    /* 48px */
+    font-weight: 500;
+    /* Medium */
+    color: var(--c-text-heading);
+    letter-spacing: -0.02em;
+}
+
+h3,
+.text-h3 {
+    font-family: var(--font-serif);
+    font-size: var(--text-h3);
+    /* 26px */
+    line-height: var(--lh-h3);
+    /* 40px */
+    font-weight: 500;
+    /* Medium */
+    color: var(--c-text-heading);
+    letter-spacing: -0.01em;
+}
+
+h4,
+.text-h4 {
+    font-family: var(--font-serif);
+    font-size: var(--text-h4);
+    /* 16px */
+    line-height: var(--lh-h4);
+    /* 24px */
+    font-weight: 700;
+    /* Bold */
+    color: var(--c-text-heading);
+}
+
+/* --- BODY TEXT --- */
+
+body,
+p,
+.text-body {
+    font-family: var(--font-sans);
+    font-size: var(--text-body);
+    /* 16px */
+    line-height: var(--lh-body);
+    /* 24px */
+    font-weight: 400;
+    /* Regular */
+    color: var(--c-text-body);
+}
+
+.text-body-light {
+    font-weight: 300;
+    /* Light */
+}
+
+.text-body-medium {
+    font-weight: 500;
+    /* Medium */
+}
+
+/* --- SMALL TEXT --- */
+
+small,
+.text-sm {
+    font-size: var(--text-sm);
+    /* 14px */
+    line-height: var(--lh-sm);
+    /* 24px */
+    font-weight: 400;
+    /* Regular */
+}
+
+/* --- EXTRA SMALL / CAPTION --- */
+
+.text-xs,
+.caption {
+    font-size: var(--text-xs);
+    /* 12px */
+    line-height: var(--lh-xs);
+    /* 16px */
+    font-weight: 400;
+    /* Regular */
+}
+
+.caption-medium {
+    font-size: var(--text-xs);
+    line-height: var(--lh-xs);
+    font-weight: 500;
+    /* Medium */
+}
+
+/* --- BUTTON TEXT --- */
+
+button,
+.btn {
+    font-family: var(--font-sans);
+    font-size: var(--text-body);
+    /* 16px */
+    line-height: var(--lh-body);
+    /* 24px */
+    font-weight: 500;
+    /* Medium */
+    letter-spacing: 0.02em;
+}
+
+/* --- UTILITY CLASSES --- */
+
+.font-light {
+    font-weight: 300;
+}
+
+.font-regular {
+    font-weight: 400;
+}
+
+.font-medium {
+    font-weight: 500;
+}
+
+.font-semibold {
+    font-weight: 600;
+}
+
+.font-bold {
+    font-weight: 700;
+}
+
+.font-black {
+    font-weight: 900;
+}
+
+.font-serif {
+    font-family: var(--font-serif);
+}
+
+.font-sans {
+    font-family: var(--font-sans);
+}

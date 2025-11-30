@@ -1,0 +1,68 @@
+<section class="page-section active">
+    <div class="top-bar">
+        <div class="page-title">
+            <h1 class="page-title-text text-maroon">Manajemen Menu</h1>
+            <p>Tambah atau non-aktifkan menu kedai.</p>
+        </div>
+        <button class="btn btn-primary" onclick="Admin.openModal()">
+            <i data-feather="plus"></i> Tambah Menu
+        </button>
+    </div>
+
+    <div class="card">
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Foto</th>
+                        <th>Nama Menu</th>
+                        <th>Kategori</th>
+                        <th>Harga</th>
+                        <th>Status</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+                <tbody id="productTableBody">
+                    <tr><td colspan="6" style="text-align:center; padding:20px;">Memuat data...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+
+<div class="modal-overlay" id="productModal">
+    <div class="modal-card">
+        <button class="modal-close" onclick="Admin.closeModal()"><i data-feather="x"></i></button>
+        
+        <h3 class="serif font-bold text-maroon" style="margin-bottom:20px;">Menu Baru</h3>
+        
+        <form id="productForm" onsubmit="Admin.saveProduct(event)">
+            <div class="form-group">
+                <label class="form-label">Nama Menu</label>
+                <input type="text" name="name" class="form-input" required placeholder="Contoh: Burger Sultan">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Kategori</label>
+                <select name="category_id" class="form-input" required>
+                    <option value="1">Makanan</option>
+                    <option value="2">Minuman</option>
+                    <option value="3">Snack</option>
+                    <option value="4">Dessert</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Harga (Rp)</label>
+                <input type="number" name="price" class="form-input" required placeholder="15000">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Foto Menu</label>
+                <input type="file" name="image" class="form-input" accept="image/*" required>
+            </div>
+
+            <button type="submit" class="btn-block-luxury" id="btnSave">SIMPAN</button>
+        </form>
+    </div>
+</div>
