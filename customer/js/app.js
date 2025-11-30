@@ -158,7 +158,7 @@ const App = {
 
                 <div class="card-footer-actions">
                     <span class="price-label-luxury">${Utils.formatRp(p.price)}</span>
-                    ${this.state.tableNum ? `
+                    ${this.state.tableNum && p.has_sambal_addon != 1 && p.has_saos_addon != 1 ? `
                     <button class="btn-add-mini" onclick="event.stopPropagation(); App.quickAdd(${p.id})">
                         <i data-feather="plus"></i>
                     </button>` : ''}
@@ -208,7 +208,14 @@ const App = {
 
     quickAdd(id) {
         const p = this.state.products.find(x => x.id === id);
-        // Quick add doesn't support addon selection - just add without addon
+
+        // Safety check: jika produk punya addon, buka modal instead
+        if (p.has_sambal_addon == 1 || p.has_saos_addon == 1) {
+            this.openProductModal(id);
+            return;
+        }
+
+        // Quick add without addon
         Store.addToCart(p, null);
         this.showToast('Ditambahkan +1');
     },
@@ -248,12 +255,12 @@ const App = {
                         <div class="cart-item-price">${Utils.formatRp(item.price)}</div>
                         
                         <div class="qty-control-group">
-                            <button class="btn-qty-ctrl" onclick="Store.updateQty(${item.id}, -1)">-</button>
+                            <button class="btn-qty-ctrl" onclick="Store.updateQty('${item.uniqueId}', -1)">-</button>
                             <span class="qty-text">${item.qty}</span>
-                            <button class="btn-qty-ctrl" onclick="Store.updateQty(${item.id}, 1)">+</button>
+                            <button class="btn-qty-ctrl" onclick="Store.updateQty('${item.uniqueId}', 1)">+</button>
                         </div>
                     </div>
-                    <div onclick="Store.removeFromCart(${item.id})" style="cursor:pointer; padding:5px; color:#d11;">
+                    <div onclick="Store.removeFromCart('${item.uniqueId}')" style="cursor:pointer; padding:5px; color:#d11;">
                         <i data-feather="trash-2" style="width:16px;"></i>
                     </div>
                 </div>

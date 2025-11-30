@@ -21,9 +21,16 @@
     <div class="sticky-header-group">
         <header class="app-header">
             <div class="top-bar-nav">
-                <div class="brand-logo-text">
-                    KEDAI SEKAR MAKMUR
-                    <span class="table-label-small" id="header-table-num">LOADING...</span>
+                <div class="brand-logo-text" style="display: flex; gap: 8px;">
+                    <img src="../assets/images/logo-kedai.png" alt="Kedai Sekar Makmur" class="brand-logo-img">
+                    <div style="display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--c-text-muted); margin-top: -3px;">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0;">
+                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                            <circle cx="12" cy="10" r="3"></circle>
+                        </svg>
+                        <span style="line-height: 1.3;">Jl.Kartini No 105, Burikan, Kudus</span>
+                    </div>
+                    <span class="table-label-small" id="header-table-num">loading...</span>
                 </div>
 
                 <div class="search-wrapper">
@@ -123,7 +130,9 @@
     <div class="modal-receipt" id="qr-modal">
         <div class="btn-close-receipt" onclick="App.closeAll()">✕</div>
         <div class="receipt-top" style="text-align: center;">
-            <div class="brand-logo-text" style="font-size: 20px; margin-bottom: 5px;">Kedai Sekar Makmur</div>
+            <div style="text-align: center; margin-bottom: 5px;">
+                <img src="../assets/images/logo-kedai.png" alt="Kedai Sekar Makmur" style="height: 95px; width: auto;">
+            </div>
             <p style="font-size: 10px; color: #888; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 20px;">OFFICIAL RECEIPT</p>
             <div style="display: flex; justify-content: space-between; font-size: 12px; color: var(--c-text-body-dark); font-weight: bold; margin-bottom: 5px;">
                 <span id="qr-table-info">MEJA ?</span>

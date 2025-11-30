@@ -14,9 +14,19 @@ const AddonManager = {
                 this.addons = response.data;
                 console.log('✅ Loaded', this.addons.length, 'addons');
                 return true;
+            } else {
+                throw new Error(response.message || 'Failed to load addons');
             }
         } catch (e) {
             console.error('❌ Failed to load addons:', e);
+
+            // Show user notification
+            if (window.App && typeof App.showToast === 'function') {
+                App.showToast('⚠️ Gagal memuat pilihan addon');
+            }
+
+            // Set fallback empty array
+            this.addons = [];
             return false;
         }
     },
@@ -57,6 +67,11 @@ const AddonManager = {
             }
         }
 
+        // Add loading state
+        if (addonSection) {
+            addonSection.classList.add('loading');
+        }
+
         // Reset selection
         this.selectedAddon = null;
 
@@ -80,9 +95,9 @@ const AddonManager = {
             const titleEl = addonSection.querySelector('h4');
             if (titleEl) titleEl.textContent = title;
 
-            // Render radio buttons
+            // Render radio buttons with improved touch targets
             addonOptions.innerHTML = addonsToShow.map((addon, idx) => `
-                <label style="display: flex; align-items: center; gap: 10px; padding: 12px; 
+                <label style="display: flex; align-items: center; gap: 12px; padding: 16px; 
                     border: 2px solid var(--c-line-subtle); border-radius: 12px; 
                     cursor: pointer; transition: all 0.2s; background: white;"
                     onmouseover="this.style.borderColor='var(--c-primary)'; this.style.background='rgba(82,0,0,0.02)';" 
@@ -97,7 +112,7 @@ const AddonManager = {
                             }); 
                             this.parentElement.style.borderColor='var(--c-primary)';
                             this.parentElement.style.background='rgba(82,0,0,0.05)';"
-                        style="width: 20px; height: 20px; cursor: pointer; accent-color: var(--c-primary);">
+                        style="width: 28px; height: 28px; cursor: pointer; accent-color: var(--c-primary);">
                     <span style="flex: 1; font-weight: 500; font-size: 15px;">${addon.name}</span>
                     ${addon.price > 0 ?
                     `<span style="color: var(--c-primary); font-weight: 600;">+${Utils.formatRp(addon.price)}</span>` :
@@ -117,8 +132,16 @@ const AddonManager = {
                     }
                 }, 50);
             }
+
+            // Remove loading state after render
+            setTimeout(() => {
+                if (addonSection) {
+                    addonSection.classList.remove('loading');
+                }
+            }, 100);
         } else {
             addonSection.style.display = 'none';
+            addonSection.classList.remove('loading');
         }
     },
 

@@ -3,7 +3,7 @@
 const Store = {
     // Data Pusat (State)
     state: {
-        cart: [],          // Array belanjaan: [{id, name, price, qty, img}, ...]
+        cart: [],          // Array belanjaan: [{id, name, price, qty, img}, ...}
         customerTable: null, // Nomor meja (untuk customer app)
         user: null         // Data user login
     },
@@ -11,20 +11,25 @@ const Store = {
     // --- ACTIONS (Cara mengubah data) ---
 
     // Tambah Item ke Keranjang
-    // Tambah Item ke Keranjang
     addToCart(product, addon = null) {
-        // Match by product ID AND addon ID (if present)
-        const existingItem = this.state.cart.find(item => {
-            if (addon) {
-                return item.id === product.id && item.addon?.id === addon.id;
-            }
-            return item.id === product.id && !item.addon;
-        });
+        // Generate unique ID untuk cart item
+        const uniqueId = addon
+            ? `${product.id}_addon_${addon.id}`
+            : `${product.id}_no_addon`;
+
+        // Cari apakah sudah ada item dengan uniqueId yang sama
+        const existingItem = this.state.cart.find(item => item.uniqueId === uniqueId);
 
         if (existingItem) {
+            // Item sudah ada, tambah quantity
             existingItem.qty++;
         } else {
-            const cartItem = { ...product, qty: 1 };
+            // Item baru, buat object baru
+            const cartItem = {
+                ...product,
+                uniqueId: uniqueId,
+                qty: 1
+            };
 
             // Add addon if provided
             if (addon) {
@@ -36,7 +41,7 @@ const Store = {
                 };
                 // If addon has price, add to item price
                 if (addon.price > 0) {
-                    cartItem.price += addon.price;
+                    cartItem.price = parseFloat(product.price) + parseFloat(addon.price);
                 }
             }
 
@@ -48,8 +53,8 @@ const Store = {
     },
 
     // Kurangi Item / Hapus
-    updateQty(productId, change) {
-        const index = this.state.cart.findIndex(item => item.id === productId);
+    updateQty(uniqueId, change) {
+        const index = this.state.cart.findIndex(item => item.uniqueId === uniqueId);
 
         if (index !== -1) {
             this.state.cart[index].qty += change;
@@ -65,8 +70,8 @@ const Store = {
     },
 
     // Hapus Item Spesifik
-    removeFromCart(productId) {
-        this.state.cart = this.state.cart.filter(item => item.id !== productId);
+    removeFromCart(uniqueId) {
+        this.state.cart = this.state.cart.filter(item => item.uniqueId !== uniqueId);
         this.notify('cart-updated');
         this.saveLocal();
     },
