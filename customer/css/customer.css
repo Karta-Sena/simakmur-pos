@@ -266,6 +266,7 @@ input {
     font-size: clamp(34px, 6vw, 46px);
     line-height: 1.1;
     color: var(--c-text-heading-dark);
+    font-family: 'Laraboyok', serif;
 }
 
 .hero-text.accent-underline {
@@ -273,10 +274,10 @@ input {
     display: inline;
     background-image: none;
     text-decoration: underline;
-    text-decoration-color: rgba(189, 158, 119, 0.7); 
-    text-decoration-thickness: 4px; 
-    text-underline-offset: 4px; 
-    text-decoration-skip-ink: none; 
+    text-decoration-color: rgba(189, 158, 119, 0.7);
+    text-decoration-thickness: 4px;
+    text-underline-offset: 4px;
+    text-decoration-skip-ink: none;
 }
 
 /* =========================================
@@ -807,10 +808,10 @@ input {
     opacity: 0;
     pointer-events: none;
     transition: 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-    
+
     /* Background transparan agar shadow mengikuti bentuk kertas */
     background: transparent;
-    
+
     /* Shadow lembut di sekeliling kertas */
     filter: drop-shadow(0 5px 15px rgba(0, 0, 0, 0.2));
 }
@@ -822,8 +823,10 @@ input {
 }
 
 /* KONTTAINER UTAMA (BAGIAN PUTIH) */
-.receipt-top, .receipt-bottom {
-    background: #ffffff; /* Pastikan putih bersih */
+.receipt-top,
+.receipt-bottom {
+    background: #ffffff;
+    /* Pastikan putih bersih */
     width: 100%;
     position: relative;
     padding-left: 20px;
@@ -841,10 +844,11 @@ input {
     padding-top: 5px;
     padding-bottom: 25px;
     text-align: center;
-    border-radius: 0; /* Bawah lurus, nanti disambung SVG */
-    
+    border-radius: 0;
+    /* Bawah lurus, nanti disambung SVG */
+
     /* FIX: Hilangkan potensi garis rendering */
-    margin-bottom: -1px; 
+    margin-bottom: -1px;
 }
 
 /* --- TOMBOL CLOSE (X) --- */
@@ -863,7 +867,10 @@ input {
     transition: 0.2s;
     z-index: 10;
 }
-.btn-close-receipt:hover { color: var(--c-primary); }
+
+.btn-close-receipt:hover {
+    color: var(--c-primary);
+}
 
 /* --- GERIGI KERTAS (MENGGUNAKAN SVG) --- */
 /* Ini teknik paling rapi: menempelkan gambar segitiga putih di bawah */
@@ -872,21 +879,24 @@ input {
     display: block;
     position: absolute;
     left: 0;
-    
+
     /* Overlap 1px ke atas untuk menutupi garis sambungan */
-    bottom: -10px; 
-    
+    bottom: -10px;
+
     width: 100%;
-    height: 11px; /* Tinggi gerigi + overlap */
-    
+    height: 11px;
+    /* Tinggi gerigi + overlap */
+
     /* Pola Segitiga Putih SVG (Dijamin Putih & Tajam) */
     background-image: url("data:image/svg+xml,%3Csvg width='20' height='10' viewBox='0 0 20 10' xmlns='http://www.w3.org/2000/svg'%3E%3Cpolygon points='0,0 20,0 10,10' fill='%23ffffff'/%3E%3C/svg%3E");
-    
-    background-size: 20px 10px; /* Lebar dan tinggi satu gigi */
+
+    background-size: 20px 10px;
+    /* Lebar dan tinggi satu gigi */
     background-repeat: repeat-x;
     background-position: bottom left;
-    
-    z-index: 2; /* Pastikan di atas bayangan */
+
+    z-index: 2;
+    /* Pastikan di atas bayangan */
 }
 
 /* --- TYPOGRAPHY & ASESORIS --- */
@@ -920,17 +930,34 @@ input {
 }
 
 /* Font Adjustments */
-#qr-table-info { font-weight: 800; color: #000; font-size: 13px; }
-#qr-date, #qr-time {
-    font-family: var(--font-family-sans); 
-    font-size: 11px;
-    font-weight: 600; 
-    color: #666;
-    letter-spacing: 0px; 
-    text-transform: uppercase; 
+#qr-table-info {
+    font-weight: 800;
+    color: #000;
+    font-size: 13px;
 }
 
-@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+#qr-date,
+#qr-time {
+    font-family: var(--font-family-sans);
+    font-size: 11px;
+    font-weight: 600;
+    color: #666;
+    letter-spacing: 0px;
+    text-transform: uppercase;
+}
+
+@keyframes pulse {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.4;
+    }
+}
+
 /* =========================================
    10. TOAST NOTIFICATION
    ========================================= */
@@ -995,7 +1022,8 @@ input {
 }
 
 .main-content-scroll::-webkit-scrollbar {
-    width: 6px; /* Lebih tipis */
+    width: 6px;
+    /* Lebih tipis */
 }
 
 .main-content-scroll::-webkit-scrollbar-track {
@@ -1003,19 +1031,22 @@ input {
 }
 
 .main-content-scroll::-webkit-scrollbar-thumb {
-    background-color: var(--c-accent-gold); /* Warna Emas Muted */
-    border-radius: 10px; /* Membulat */
+    background-color: var(--c-accent-gold);
+    /* Warna Emas Muted */
+    border-radius: 10px;
+    /* Membulat */
 }
 
 .main-content-scroll::-webkit-scrollbar-thumb:hover {
-    background-color: var(--c-primary); /* Berubah Merah saat di-hover */
+    background-color: var(--c-primary);
+    /* Berubah Merah saat di-hover */
 }
 
 /* =========================================
    12. MOBILE HEADER OPTIMIZATION (DIET HEADER)
    ========================================= */
 @media (max-width: 767px) {
-    
+
     /* 1. Header lebih tipis */
     .app-header {
         padding-top: 20px;
@@ -1030,23 +1061,25 @@ input {
     /* 3. Garis gelombang lebih tipis & rapat */
     .divider-wavy-charcoal {
         margin-bottom: 10px;
-        transform: scaleY(0.8); 
+        transform: scaleY(0.8);
     }
 
     /* 4. Teks Judul lebih kecil & rapat */
     .hero-headline-split {
-        margin-bottom: 75px;
+        margin-bottom: 50px;
         gap: 2px;
     }
-    
+
     .hero-text {
-        font-size: 22px !important; /* Ukuran pas untuk baca di HP */
+        font-size: 22px !important;
+        /* Ukuran pas untuk baca di HP */
         line-height: 1.2;
     }
 
     /* 5. Mengurangi jarak wrapper kategori */
     .sticky-header-group {
         padding-bottom: 5px;
-        margin-bottom: 15px; /* Jarak antara header total dengan menu grid */
+        margin-bottom: 15px;
+        /* Jarak antara header total dengan menu grid */
     }
 }

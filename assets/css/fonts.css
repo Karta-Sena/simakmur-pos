@@ -79,3 +79,29 @@
     font-style: normal;
     font-display: swap;
 }
+
+/* ============================================
+   LARABOYOK (DISPLAY FONT)
+   ============================================ */
+
+/* Regular */
+@font-face {
+    font-family: 'Laraboyok';
+    src: url('../fonts/Laraboyok/Web-TT/Laraboyok-Regular.woff2') format('woff2'),
+        url('../fonts/Laraboyok/Web-TT/Laraboyok-Regular.woff') format('woff'),
+        url('../fonts/Laraboyok/Web-TT/Laraboyok-Regular.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
+/* Italic */
+@font-face {
+    font-family: 'Laraboyok';
+    src: url('../fonts/Laraboyok/Web-TT/Laraboyok-Italic.woff2') format('woff2'),
+        url('../fonts/Laraboyok/Web-TT/Laraboyok-Italic.woff') format('woff'),
+        url('../fonts/Laraboyok/Web-TT/Laraboyok-Italic.ttf') format('truetype');
+    font-weight: 400;
+    font-style: italic;
+    font-display: swap;
+}
