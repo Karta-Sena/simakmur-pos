@@ -1,5 +1,13 @@
 <?php
 // cashier/index.php
+session_start();
+
+// Cek Login
+if (!isset($_SESSION['user_id']) || ($_SESSION['role'] !== 'cashier' && $_SESSION['role'] !== 'admin')) {
+    header('Location: login.php');
+    exit;
+}
+
 require_once '../config.php';
 ?>
 <!DOCTYPE html>
@@ -25,14 +33,14 @@ require_once '../config.php';
             <div class="brand-logo" onclick="window.location.reload()">SM</div>
             
             <div class="nav-menu">
-                <button class="nav-item active" title="Dashboard"><i data-feather="grid"></i></button>
-                <button class="nav-item" title="Riwayat"><i data-feather="clock"></i></button>
-                <button class="nav-item" title="Laporan"><i data-feather="pie-chart"></i></button>
-                <button class="nav-item" title="Keluar" onclick="window.location.href='../index.php'"><i data-feather="log-out"></i></button>
+                <button class="nav-item active" id="navDashboard" title="Dashboard" onclick="POS.switchView('dashboard')"><i data-feather="grid"></i></button>
+                <button class="nav-item" id="navHistory" title="Riwayat" onclick="POS.switchView('history')"><i data-feather="clock"></i></button>
+                <button class="nav-item" id="navReport" title="Laporan" onclick="POS.switchView('report')"><i data-feather="pie-chart"></i></button>
+                <button class="nav-item" title="Keluar" onclick="if(confirm('Yakin ingin keluar?')) window.location.href='../api/auth/logout.php'"><i data-feather="log-out"></i></button>
             </div>
 
-            <div class="user-profile">
-                <img src="https://ui-avatars.com/api/?name=Kasir+1&background=cba135&color=fff" alt="User">
+            <div class="user-profile" title="<?php echo htmlspecialchars($_SESSION['full_name']); ?>">
+                <img src="https://ui-avatars.com/api/?name=<?php echo urlencode($_SESSION['full_name']); ?>&background=cba135&color=fff" alt="User">
             </div>
         </aside>
 
@@ -51,12 +59,71 @@ require_once '../config.php';
 
             <div class="category-bar" id="categoryContainer">
                 <button class="cat-pill active">Semua</button>
-                </div>
+            </div>
 
-            <div class="menu-scroll-area">
+            <!-- POS VIEW -->
+            <div class="menu-scroll-area" id="posView">
                 <div class="menu-grid-wireframe" id="menuGrid">
                     <div style="padding:40px; text-align:center; grid-column:span 3; color:#888;">
                         Memuat Menu...
+                    </div>
+                </div>
+            </div>
+
+            <!-- HISTORY VIEW (Hidden by default) -->
+            <div class="history-view" id="historyView" style="display:none; padding: 20px; overflow-y: auto; height: calc(100vh - 140px);">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+                    <h3 class="font-serif text-maroon">Riwayat Transaksi Hari Ini</h3>
+                    <button class="btn-scan" onclick="POS.loadHistory()" style="width:auto; padding:8px 15px;">
+                        <i data-feather="refresh-cw"></i> Refresh
+                    </button>
+                </div>
+                
+                <table class="table-luxury" style="width:100%; border-collapse:collapse;">
+                    <thead>
+                        <tr style="border-bottom:2px solid #eee; text-align:left;">
+                            <th style="padding:10px;">No. TRX</th>
+                            <th style="padding:10px;">Waktu</th>
+                            <th style="padding:10px;">Metode</th>
+                            <th style="padding:10px; text-align:right;">Total</th>
+                            <th style="padding:10px; text-align:center;">Status</th>
+                            <th style="padding:10px;">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="historyList">
+                        <tr><td colspan="6" style="text-align:center; padding:20px;">Memuat...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- REPORT VIEW (Hidden by default) -->
+            <div class="report-view" id="reportView" style="display:none; padding: 20px; overflow-y: auto; height: calc(100vh - 140px);">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+                    <h3 class="font-serif text-maroon">Laporan Harian</h3>
+                    <button class="btn-scan" onclick="POS.loadReport()" style="width:auto; padding:8px 15px;">
+                        <i data-feather="refresh-cw"></i> Refresh
+                    </button>
+                </div>
+
+                <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:20px; margin-bottom:30px;">
+                    <div class="stat-card" style="background:#fff; padding:20px; border-radius:12px; box-shadow:var(--shadow-sm); border:1px solid #eee;">
+                        <div style="color:#888; font-size:14px; margin-bottom:5px;">Total Penjualan</div>
+                        <div style="font-size:24px; font-weight:bold; color:var(--c-primary);" id="rptTotalSales">Rp 0</div>
+                    </div>
+                    <div class="stat-card" style="background:#fff; padding:20px; border-radius:12px; box-shadow:var(--shadow-sm); border:1px solid #eee;">
+                        <div style="color:#888; font-size:14px; margin-bottom:5px;">Total Transaksi</div>
+                        <div style="font-size:24px; font-weight:bold; color:var(--c-text-primary);" id="rptTotalTrx">0</div>
+                    </div>
+                </div>
+
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:20px;">
+                    <div style="background:#fff; padding:20px; border-radius:12px; border:1px solid #eee;">
+                        <h4 style="margin-bottom:15px; border-bottom:1px solid #eee; padding-bottom:10px;">Metode Pembayaran</h4>
+                        <div id="rptMethods">Memuat...</div>
+                    </div>
+                    <div style="background:#fff; padding:20px; border-radius:12px; border:1px solid #eee;">
+                        <h4 style="margin-bottom:15px; border-bottom:1px solid #eee; padding-bottom:10px;">Produk Terlaris</h4>
+                        <div id="rptTopProducts">Memuat...</div>
                     </div>
                 </div>
             </div>
@@ -141,6 +208,13 @@ require_once '../config.php';
         <i data-feather="check-circle"></i>
         <span id="toastMsg">Berhasil</span>
     </div>
+
+    <!-- Mobile Cart Toggle -->
+    <button class="btn-cart-toggle" onclick="POS.toggleCart()">
+        <i data-feather="shopping-cart"></i>
+        <span class="badge" id="cartBadge">0</span>
+    </button>
+    <div class="cart-overlay" id="cartOverlay" onclick="POS.toggleCart()"></div>
 
     <script src="../assets/js/utils.js"></script>
     <script src="../assets/js/api.js"></script>

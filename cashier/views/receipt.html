@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Struk Pembayaran</title>
+    <style>
+        @media print {
+            @page { margin: 0; }
+            body { margin: 0; padding: 10px; }
+        }
+        body {
+            font-family: 'Courier New', Courier, monospace;
+            width: 80mm; /* Lebar kertas thermal standar */
+            margin: 0 auto;
+            font-size: 12px;
+            color: #000;
+            background: #fff;
+        }
+        .header { text-align: center; margin-bottom: 15px; }
+        .logo { font-weight: bold; font-size: 16px; margin-bottom: 5px; }
+        .address { font-size: 10px; margin-bottom: 5px; }
+        .divider { border-top: 1px dashed #000; margin: 8px 0; }
+        .info-row { display: flex; justify-content: space-between; margin-bottom: 2px; }
+        .items-table { width: 100%; border-collapse: collapse; margin: 10px 0; }
+        .items-table th { text-align: left; border-bottom: 1px dashed #000; padding-bottom: 5px; }
+        .items-table td { padding: 5px 0; vertical-align: top; }
+        .qty { width: 30px; }
+        .price { text-align: right; }
+        .totals { margin-top: 10px; }
+        .total-row { display: flex; justify-content: space-between; margin-bottom: 5px; }
+        .grand-total { font-weight: bold; font-size: 14px; margin-top: 5px; border-top: 1px dashed #000; padding-top: 5px; }
+        .footer { text-align: center; margin-top: 20px; font-size: 10px; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo">KEDAI SEKAR MAKMUR</div>
+        <div class="address">Jl. Kartini No 105, Burikan, Kudus</div>
+        <div class="address">Telp: 0812-3456-7890</div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="info-row">
+        <span>No: <span id="trxNo">TRX-0000</span></span>
+        <span id="trxDate">01/01/2025 12:00</span>
+    </div>
+    <div class="info-row">
+        <span>Kasir: <span id="cashierName">Admin</span></span>
+    </div>
+
+    <div class="divider"></div>
+
+    <table class="items-table">
+        <thead>
+            <tr>
+                <th class="qty">Qty</th>
+                <th>Item</th>
+                <th class="price">Total</th>
+            </tr>
+        </thead>
+        <tbody id="itemsList">
+            <!-- Items will be injected here -->
+        </tbody>
+    </table>
+
+    <div class="divider"></div>
+
+    <div class="totals">
+        <div class="total-row">
+            <span>Subtotal</span>
+            <span id="subtotal">Rp 0</span>
+        </div>
+        <div class="total-row">
+            <span>Pajak (10%)</span>
+            <span id="tax">Rp 0</span>
+        </div>
+        <div class="total-row grand-total">
+            <span>TOTAL</span>
+            <span id="total">Rp 0</span>
+        </div>
+        <div class="total-row" style="margin-top: 10px;">
+            <span>Bayar (<span id="paymentMethod">Cash</span>)</span>
+            <span id="cashReceived">Rp 0</span>
+        </div>
+        <div class="total-row">
+            <span>Kembali</span>
+            <span id="change">Rp 0</span>
+        </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="footer">
+        <p>Terima Kasih atas Kunjungan Anda</p>
+        <p>Barang yang sudah dibeli tidak dapat ditukar/dikembalikan</p>
+        <p>Powered by SiMakmur POS</p>
+    </div>
+
+    <script>
+        // Parse data from URL query params or LocalStorage
+        // For simplicity, we'll assume data is passed via window opener or localStorage
+        
+        const data = JSON.parse(localStorage.getItem('lastReceipt'));
+        
+        if (data) {
+            document.getElementById('trxNo').innerText = data.transaction_number;
+            document.getElementById('trxDate').innerText = data.timestamp;
+            // document.getElementById('cashierName').innerText = data.cashier_name || 'Kasir';
+            
+            const tbody = document.getElementById('itemsList');
+            // We need items list. If API didn't return items, we might need to pass them differently.
+            // For now, let's assume API returns items or we passed them from frontend state.
+            
+            if (data.items) {
+                tbody.innerHTML = data.items.map(item => `
+                    <tr>
+                        <td>${item.qty}x</td>
+                        <td>${item.name}<br><small>@${formatRp(item.price)}</small></td>
+                        <td class="price">${formatRp(item.price * item.qty)}</td>
+                    </tr>
+                `).join('');
+            }
+
+            document.getElementById('subtotal').innerText = formatRp(data.subtotal);
+            document.getElementById('tax').innerText = formatRp(data.tax);
+            document.getElementById('total').innerText = formatRp(data.total);
+            document.getElementById('paymentMethod').innerText = data.payment_method || 'Cash';
+            document.getElementById('cashReceived').innerText = formatRp(data.cash_received || data.total);
+            document.getElementById('change').innerText = formatRp(data.change || 0);
+        }
+
+        function formatRp(num) {
+            return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(num);
+        }
+
+        window.onload = function() {
+            setTimeout(function() {
+                window.print();
+                // window.close(); // Optional: Close after print
+            }, 500);
+        }
+    </script>
+</body>
+</html>
