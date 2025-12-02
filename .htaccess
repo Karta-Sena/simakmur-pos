@@ -1,0 +1,35 @@
+# SIMAKMUR POS - Apache Configuration
+
+# Prevent directory listing
+Options -Indexes
+
+# Protect .env file
+<Files ".env">
+Require all denied
+</Files>
+
+# Protect .env.example
+<Files ".env.example">
+Require all denied
+</Files>
+
+# Protect config files
+<Files "config.php">
+Require all denied
+</Files>
+
+# Protect all hidden files
+<FilesMatch "^\.">
+Require all denied
+</FilesMatch>
+
+# API Routing (uncomment to enable clean URLs)
+# <IfModule mod_rewrite.c>
+#     RewriteEngine On
+#     RewriteBase /simakmur-pos/
+#     
+#     # /api/menu -> /api/menu.php
+#     RewriteCond %{REQUEST_FILENAME} !-f
+#     RewriteCond %{REQUEST_FILENAME} !-d
+#     RewriteRule ^api/([a-zA-Z0-9_-]+)/?$ api/$1.php [L,QSA]
+# </IfModule>

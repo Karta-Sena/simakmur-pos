@@ -1,9 +1,32 @@
-# Abaikan file konfigurasi asli (karena beda laptop beda password)
-config.php
+# Environment & Configuration
+.env
 
-# Abaikan folder upload (biar repo tidak berat)
-uploads/
+# Uploads
+uploads/*
+!uploads/.gitkeep
 
-# Abaikan file sistem sampah
+# IDEs & Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Dependencies
+node_modules/
+vendor/
+composer.lock
+package-lock.json
+
+# Logs & Cache
+*.log
+logs/
+cache/
+tmp/
+temp/
+
+# OS Files
 .DS_Store
 Thumbs.db
+desktop.ini
+*.tmp
